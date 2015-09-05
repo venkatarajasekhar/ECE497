@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <iostream>
 #include <vector>
 #include "qfontlaocodec_p.h"
 #include "qlist.h"
@@ -109,7 +110,11 @@ QByteArray QFontLaoCodec::convertFromUnicode(const QChar *uc, int len, Converter
             *rdata = (uchar) sdata->unicode();
         } else if (sdata->unicode() >= 0x0e80 && sdata->unicode() <= 0x0eff) {
           //  uchar lao = unicode_to_mulelao[sdata->unicode() - 0x0e80];
-          uchar lao = v_unicode_to_mulelao.push_back((sdata->unicode())-(0x0e80));
+          try{
+          uchar lao = v_unicode_to_mulelao.at((sdata->unicode())-(0x0e80));
+          }catch (exception& e) {
+	            cout << "Qchar exceeds vector dimensions." << endl;
+          }
             if (lao)
                 *rdata = lao;
             else
