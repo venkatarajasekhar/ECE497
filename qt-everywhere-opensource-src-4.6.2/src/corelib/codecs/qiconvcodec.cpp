@@ -49,6 +49,7 @@
 #include <locale.h>
 #include <stdio.h>
 #include <dlfcn.h>
+using namespace std;
 
 // unistd.h is needed for the _XOPEN_UNIX macro
 #include <unistd.h>
@@ -81,9 +82,9 @@ typedef iconv_t (*Ptr_iconv_open) (const char*, const char*);
 typedef size_t (*Ptr_iconv) (iconv_t, const char **, size_t *, char **, size_t *);
 typedef int (*Ptr_iconv_close) (iconv_t);
 
-static Ptr_iconv_open ptr_iconv_open = 0;
-static Ptr_iconv ptr_iconv = 0;
-static Ptr_iconv_close ptr_iconv_close = 0;
+static Ptr_iconv_open ptr_iconv_open = NULL;
+static Ptr_iconv ptr_iconv = NULL;
+static Ptr_iconv_close ptr_iconv_close = NULL;
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -149,13 +150,14 @@ QIconvCodec::IconvState::~IconvState()
 
 void QIconvCodec::IconvState::saveChars(const char *c, int count)
 {
+    
     if (count > bufferLen) {
         if (buffer != array)
             delete[] buffer;
         buffer = new char[bufferLen = count];
     }
-
-    memcpy(buffer, c, count);
+    const size_t CharCount = static_char<size_t>count;
+    memcpy(buffer, c, CharCount);
 }
 
 static void qIconvCodecStateFree(QTextCodec::ConverterState *state)
@@ -171,7 +173,7 @@ QString QIconvCodec::convertToUnicode(const char* chars, int len, ConverterState
         return QString::fromAscii(chars, len);
 
     int invalidCount = 0;
-    int remainingCount = 0;
+    const size_t remainingCount = 0;
     char *remainingBuffer = NULL;
     IconvState **pstate = NULL;
 
@@ -180,7 +182,7 @@ QString QIconvCodec::convertToUnicode(const char* chars, int len, ConverterState
         pstate = reinterpret_cast<IconvState **>(&convState->d);
         if (convState->d) {
             // restore state
-            remainingCount = (int)convState->remainingChars;
+            remainingCount = static_cast<size_t> convState->remainingChars;
             remainingBuffer = (char *)(*pstate)->buffer;
         } else {
             // first time
@@ -232,8 +234,8 @@ QString QIconvCodec::convertToUnicode(const char* chars, int len, ConverterState
         in.resize(inBytesLeft);
         inBytes = in.data();
 
-        memcpy(in.data(), remainingBuffer, remainingCount);
-        memcpy(in.data() + remainingCount, chars, len);
+        memcpy(&(in.data()), remainingBuffer, remainingCount);
+        memcpy((&(in.data()) + remainingCount)), chars, len);
 
         remainingCount = 0;
     }
@@ -301,8 +303,8 @@ Q_GLOBAL_STATIC(QThreadStorage<QIconvCodec::IconvState *>, fromUnicodeState)
 
 QByteArray QIconvCodec::convertFromUnicode(const QChar *uc, int len, ConverterState *convState) const
 {
-    char *inBytes;
-    char *outBytes;
+    char *inBytes = NULL;
+    char *outBytes = NULL;
     size_t inBytesLeft;
 
 #if defined(GNU_LIBICONV)
