@@ -54,6 +54,23 @@
 //
 
 #include "QtCore/qtextcodec.h"
+typedef struct {
+    const char name[10];
+    ushort base;
+}Codecs;
+
+static const Codecs codecs [] = {
+    { "Iscii-Dev", 0x900 },
+    { "Iscii-Bng", 0x980 },
+    { "Iscii-Pnj", 0xa00 },
+    { "Iscii-Gjr", 0xa80 },
+    { "Iscii-Ori", 0xb00 },
+    { "Iscii-Tml", 0xb80 },
+    { "Iscii-Tlg", 0xc00 },
+    { "Iscii-Knd", 0xc80 },
+    { "Iscii-Mlm", 0xd00 }
+};
+static vector<const Codecs> v_CodecData(codecs);
 
 QT_BEGIN_NAMESPACE
 
