@@ -161,8 +161,8 @@ static const uchar uni_to_iscii_pairs[] = {
     0x64, 0x64  // 0x965
 };
 static vector<const Codecs> v_CodecData(codecs);
-static vector<const Codecs> v_iscii_to_uni_tableData(iscii_to_uni_table);
-static vector<const Codecs> v_uni_to_iscii_tableData(uni_to_iscii_table);
+static vector<const uchar> v_iscii_to_uni_tableData(iscii_to_uni_table);
+static vector<const uchar> v_uni_to_iscii_tableData(uni_to_iscii_table);
 static vector<const uchar>  v_uni_to_iscii_pairsData(uni_to_iscii_pairs);
 
 QT_BEGIN_NAMESPACE
