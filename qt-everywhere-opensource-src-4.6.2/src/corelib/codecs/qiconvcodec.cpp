@@ -172,16 +172,16 @@ QString QIconvCodec::convertToUnicode(const char* chars, int len, ConverterState
 
     int invalidCount = 0;
     int remainingCount = 0;
-    char *remainingBuffer = 0;
-    IconvState **pstate;
+    char *remainingBuffer = NULL;
+    IconvState **pstate = NULL;
 
     if (convState) {
         // stateful conversion
         pstate = reinterpret_cast<IconvState **>(&convState->d);
         if (convState->d) {
             // restore state
-            remainingCount = convState->remainingChars;
-            remainingBuffer = (*pstate)->buffer;
+            remainingCount = (int)convState->remainingChars;
+            remainingBuffer = (char *)(*pstate)->buffer;
         } else {
             // first time
             convState->flags |= FreeFunction;
@@ -200,9 +200,9 @@ QString QIconvCodec::convertToUnicode(const char* chars, int len, ConverterState
         pstate = &toUnicodeState()->localData();
     }
 
-    if (!*pstate) {
+    if (!(*pstate)) {
         // first time, create the state
-        iconv_t cd = QIconvCodec::createIconv_t(UTF16, 0);
+        iconv_t cd = static_cast<iconv_t>QIconvCodec::createIconv_t(UTF16, 0);
         if (cd == reinterpret_cast<iconv_t>(-1)) {
             static int reported = 0;
             if (!reported++) {
