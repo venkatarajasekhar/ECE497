@@ -38,14 +38,16 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
+#include <vector>
 #include "qfontlaocodec_p.h"
 #include "qlist.h"
 
 #ifndef QT_NO_CODECS
 #ifndef QT_NO_BIG_CODECS
-
+using namespace std;
 QT_BEGIN_NAMESPACE
+
+/*Basic Implementation using C Array, Modification required to C++ Vector */
 
 static unsigned char const unicode_to_mulelao[256] =
     {
@@ -75,6 +77,7 @@ static unsigned char const unicode_to_mulelao[256] =
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
+static vector<unsigned char const> v_unicode_to_mulelao (unicode_to_mulelao);
 
 QFontLaoCodec::~QFontLaoCodec()
 {
@@ -105,7 +108,8 @@ QByteArray QFontLaoCodec::convertFromUnicode(const QChar *uc, int len, Converter
         if (sdata->unicode() < 0x80) {
             *rdata = (uchar) sdata->unicode();
         } else if (sdata->unicode() >= 0x0e80 && sdata->unicode() <= 0x0eff) {
-            uchar lao = unicode_to_mulelao[sdata->unicode() - 0x0e80];
+          //  uchar lao = unicode_to_mulelao[sdata->unicode() - 0x0e80];
+          uchar lao = v_unicode_to_mulelao.push_back((sdata->unicode())-(0x0e80));
             if (lao)
                 *rdata = lao;
             else
