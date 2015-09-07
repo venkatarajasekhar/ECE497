@@ -47,7 +47,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 QT_MODULE(Multimedia)
 
@@ -61,14 +61,14 @@ class Q_MULTIMEDIA_EXPORT QAbstractVideoSurface : public QObject
     Q_OBJECT
 
 public:
-    enum Error
+    typedef class enum 
     {
         NoError,
         UnsupportedFormatError,
         IncorrectFormatError,
         StoppedError,
         ResourceError
-    };
+    }Error;
 
     explicit QAbstractVideoSurface(QObject *parent = 0);
     ~QAbstractVideoSurface();
@@ -103,7 +103,7 @@ private:
     Q_DECLARE_PRIVATE(QAbstractVideoSurface)
 };
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 QT_END_HEADER
 
