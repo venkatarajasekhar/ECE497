@@ -42,22 +42,23 @@
 #include <QtMultimedia/qaudioformat.h>
 
 
-QT_BEGIN_NAMESPACE
-
-
-class QAudioFormatPrivate : public QSharedData
-{
-public:
-    QAudioFormatPrivate()
+namespace QT_BEGIN_NAMESPACE{
+    
+    QAudioFormatPrivate::QAudioFormatPrivate()
     {
         frequency = -1;
         channels = -1;
         sampleSize = -1;
+        try{
         byteOrder = QAudioFormat::Endian(QSysInfo::ByteOrder);
+        }catch(...){
+            cout << "Caught exception from QAudioFormat::Endian()";
+        }
+   
         sampleType = QAudioFormat::Unknown;
     }
 
-    QAudioFormatPrivate(const QAudioFormatPrivate &other):
+    QAudioFormatPrivate::QAudioFormatPrivate(const QAudioFormatPrivate &other):
         QSharedData(other),
         codec(other.codec),
         byteOrder(other.byteOrder),
@@ -68,7 +69,7 @@ public:
     {
     }
 
-    QAudioFormatPrivate& operator=(const QAudioFormatPrivate &other)
+    QAudioFormatPrivate::QAudioFormatPrivate& operator=(const QAudioFormatPrivate &other)
     {
         codec = other.codec;
         byteOrder = other.byteOrder;
@@ -79,14 +80,12 @@ public:
 
         return *this;
     }
+    
+    
+    
+    
+    
 
-    QString codec;
-    QAudioFormat::Endian byteOrder;
-    QAudioFormat::SampleType sampleType;
-    int frequency;
-    int channels;
-    int sampleSize;
-};
 
 /*!
     \class QAudioFormat
@@ -351,5 +350,5 @@ QAudioFormat::SampleType QAudioFormat::sampleType() const
     \value LittleEndian  samples are little endian byte order
 */
 
-QT_END_NAMESPACE
+}//QT_END_NAMESPACE
 
