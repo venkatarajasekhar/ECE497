@@ -51,7 +51,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 QT_MODULE(Multimedia)
 
@@ -62,13 +62,13 @@ class QVideoSurfaceFormatPrivate;
 class Q_MULTIMEDIA_EXPORT QVideoSurfaceFormat
 {
 public:
-    enum Direction
+    typedef class enum 
     {
         TopToBottom,
         BottomToTop
-    };
+    }Direction;
 
-    enum YCbCrColorSpace
+    typedef class enum 
     {
         YCbCr_Undefined,
         YCbCr_BT601,
@@ -79,7 +79,7 @@ public:
 #ifndef qdoc
         YCbCr_CustomMatrix
 #endif
-    };
+    }YCbCrColorSpace;
 
     QVideoSurfaceFormat();
     QVideoSurfaceFormat(
@@ -136,7 +136,7 @@ private:
 Q_MULTIMEDIA_EXPORT QDebug operator<<(QDebug, const QVideoSurfaceFormat &);
 #endif
 
-QT_END_NAMESPACE
+}//QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QVideoSurfaceFormat::Direction)
 Q_DECLARE_METATYPE(QVideoSurfaceFormat::YCbCrColorSpace)
