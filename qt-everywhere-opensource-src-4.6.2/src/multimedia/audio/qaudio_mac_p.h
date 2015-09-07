@@ -63,7 +63,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 QT_MODULE(Multimedia)
 
@@ -81,45 +81,12 @@ public:
     QAudioRingBuffer(int bufferSize);
     ~QAudioRingBuffer();
 
-    Region acquireReadRegion(int size)
-    {
-        const int used = m_bufferUsed.fetchAndAddAcquire(0);
+    Region acquireReadRegion(int size);
 
-        if (used > 0) {
-            const int readSize = qMin(size, qMin(m_bufferSize - m_readPos, used));
-
-            return readSize > 0 ? Region(m_buffer + m_readPos, readSize) : Region(0, 0);
-        }
-
-        return Region(0, 0);
-    }
-
-    void releaseReadRegion(Region const& region)
-    {
-        m_readPos = (m_readPos + region.second) % m_bufferSize;
-
-        m_bufferUsed.fetchAndAddRelease(-region.second);
-    }
-
-    Region acquireWriteRegion(int size)
-    {
-        const int free = m_bufferSize - m_bufferUsed.fetchAndAddAcquire(0);
-
-        if (free > 0) {
-            const int writeSize = qMin(size, qMin(m_bufferSize - m_writePos, free));
-
-            return writeSize > 0 ? Region(m_buffer + m_writePos, writeSize) : Region(0, 0);
-        }
-
-        return Region(0, 0);
-    }
-
-    void releaseWriteRegion(Region const& region)
-    {
-        m_writePos = (m_writePos + region.second) % m_bufferSize;
-
-        m_bufferUsed.fetchAndAddRelease(region.second);
-    }
+    void releaseReadRegion(Region const& region);
+    
+     void releaseWriteRegion(Region const& region);
+     void releaseReadRegion(Region const& region);
 
     int used() const;
     int free() const;
@@ -135,7 +102,7 @@ private:
     QAtomicInt  m_bufferUsed;
 };
 
-QT_END_NAMESPACE
+}
 
 QT_END_HEADER
 
