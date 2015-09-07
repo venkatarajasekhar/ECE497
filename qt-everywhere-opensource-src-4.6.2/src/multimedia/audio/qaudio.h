@@ -55,9 +55,11 @@ QT_MODULE(Multimedia)
 
 namespace QAudio
 {
-    enum Error { NoError, OpenError, IOError, UnderrunError, FatalError };
-    enum State { ActiveState, SuspendedState, StoppedState, IdleState };
-    enum Mode { AudioInput, AudioOutput };
+    typedef class enum { 
+        NoError, 
+        OpenError, IOError, UnderrunError, FatalError }Error;
+    typedef class enum  { ActiveState, SuspendedState, StoppedState, IdleState }State;
+    typedef class enum  { AudioInput, AudioOutput }Mode;
 }
 
 QT_END_NAMESPACE
