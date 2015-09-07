@@ -57,7 +57,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 QT_MODULE(Multimedia)
 
@@ -76,7 +76,7 @@ public:
     void unmap();
 };
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 QT_END_HEADER
 
