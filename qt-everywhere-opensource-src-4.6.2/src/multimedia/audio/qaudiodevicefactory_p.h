@@ -56,12 +56,16 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/qbytearray.h>
 #include <QtCore/qlist.h>
-
+#include <QtCore/qdebug.h>
+#include <QtMultimedia/qaudioengine.h>
+#include <QtMultimedia/qaudioengineplugin.h>
+#include <private/qfactoryloader_p.h>
+#include "qaudiodevicefactory_p.h"
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE {
 
 QT_MODULE(Multimedia)
 
@@ -89,7 +93,64 @@ public:
     static QAbstractAudioOutput* createNullOutput();
 };
 
-QT_END_NAMESPACE
+class QNullDeviceInfo : public QAbstractAudioDeviceInfo
+{
+public:
+    QAudioFormat preferredFormat() const { qWarning()<<"using null deviceinfo, none available"; return QAudioFormat(); }
+    bool isFormatSupported(const QAudioFormat& ) const { return false; }
+    QAudioFormat nearestFormat(const QAudioFormat& ) const { return QAudioFormat(); }
+    QString deviceName() const { return QString(); }
+    QStringList codecList() { return QStringList(); }
+    QList<int> frequencyList()  { return QList<int>(); }
+    QList<int> channelsList() { return QList<int>(); }
+    QList<int> sampleSizeList() { return QList<int>(); }
+    QList<QAudioFormat::Endian> byteOrderList() { return QList<QAudioFormat::Endian>(); }
+    QList<QAudioFormat::SampleType> sampleTypeList() { return QList<QAudioFormat::SampleType>(); }
+};
+
+class QNullInputDevice : public QAbstractAudioInput
+{
+public:
+    QIODevice* start(QIODevice* ) { qWarning()<<"using null input device, none available"; return 0; }
+    void stop() {}
+    void reset() {}
+    void suspend() {}
+    void resume() {}
+    int bytesReady() const { return 0; }
+    int periodSize() const { return 0; }
+    void setBufferSize(int ) {}
+    int bufferSize() const  { return 0; }
+    void setNotifyInterval(int ) {}
+    int notifyInterval() const { return 0; }
+    qint64 processedUSecs() const { return 0; }
+    qint64 elapsedUSecs() const { return 0; }
+    QAudio::Error error() const { return QAudio::OpenError; }
+    QAudio::State state() const { return QAudio::StoppedState; }
+    QAudioFormat format() const { return QAudioFormat(); }
+};
+
+class QNullOutputDevice : public QAbstractAudioOutput
+{
+public:
+    QIODevice* start(QIODevice* ) { qWarning()<<"using null output device, none available"; return 0; }
+    void stop() {}
+    void reset() {}
+    void suspend() {}
+    void resume() {}
+    int bytesFree() const { return 0; }
+    int periodSize() const { return 0; }
+    void setBufferSize(int ) {}
+    int bufferSize() const  { return 0; }
+    void setNotifyInterval(int ) {}
+    int notifyInterval() const { return 0; }
+    qint64 processedUSecs() const { return 0; }
+    qint64 elapsedUSecs() const { return 0; }
+    QAudio::Error error() const { return QAudio::OpenError; }
+    QAudio::State state() const { return QAudio::StoppedState; }
+    QAudioFormat format() const { return QAudioFormat(); }
+};
+
+} //QT_END_NAMESPACE
 
 QT_END_HEADER
 
