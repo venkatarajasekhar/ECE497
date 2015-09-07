@@ -41,8 +41,46 @@
 
 
 #include "qaudio_mac_p.h"
+namespace QT_BEGIN_NAMESPACE{
 
-QT_BEGIN_NAMESPACE
+Region acquireReadRegion(int size)
+    {
+        const int used = m_bufferUsed.fetchAndAddAcquire(0);
+
+        if (used > 0) {
+            const int readSize = qMin(size, qMin(m_bufferSize - m_readPos, used));
+
+            return readSize > 0 ? Region(m_buffer + m_readPos, readSize) : Region(0, 0);
+        }
+
+        return Region(0, 0);
+    }
+    Region acquireWriteRegion(int size)
+    {
+        const int free = m_bufferSize - m_bufferUsed.fetchAndAddAcquire(0);
+
+        if (free > 0) {
+            const int writeSize = qMin(size, qMin(m_bufferSize - m_writePos, free));
+
+            return writeSize > 0 ? Region(m_buffer + m_writePos, writeSize) : Region(0, 0);
+        }
+
+        return Region(0, 0);
+    }
+
+    void releaseWriteRegion(Region const& region)
+    {
+        m_writePos = (m_writePos + region.second) % m_bufferSize;
+
+        m_bufferUsed.fetchAndAddRelease(region.second);
+    }
+    
+void releaseReadRegion(Region const& region)
+    {
+        m_readPos = (m_readPos + region.second) % m_bufferSize;
+
+        m_bufferUsed.fetchAndAddRelease(-region.second);
+    }
 
 // Debugging
 QDebug operator<<(QDebug dbg, const QAudioFormat& audioFormat)
@@ -137,6 +175,6 @@ void QAudioRingBuffer::reset()
     m_bufferUsed = 0;
 }
 
-QT_END_NAMESPACE
+}
 
 
