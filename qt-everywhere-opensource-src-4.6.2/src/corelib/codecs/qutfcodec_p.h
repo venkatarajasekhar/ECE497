@@ -58,12 +58,12 @@
 
 QT_BEGIN_NAMESPACE
 
-enum DataEndianness
+typedef enum class 
 {
     DetectEndianness,
     BigEndianness,
     LittleEndianness
-};
+}DataEndianness;
 
 struct QUtf8
 {
