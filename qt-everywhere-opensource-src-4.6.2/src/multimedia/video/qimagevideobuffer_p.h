@@ -55,7 +55,7 @@
 
 #include <QtMultimedia/qabstractvideobuffer.h>
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 class QImage;
 
@@ -74,6 +74,6 @@ public:
     void unmap();
 };
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 #endif
