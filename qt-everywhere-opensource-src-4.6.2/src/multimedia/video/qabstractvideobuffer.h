@@ -46,7 +46,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 QT_MODULE(Multimedia)
 
@@ -57,20 +57,20 @@ class QAbstractVideoBufferPrivate;
 class Q_MULTIMEDIA_EXPORT QAbstractVideoBuffer
 {
 public:
-    enum HandleType
+    typedef enum class 
     {
         NoHandle,
         GLTextureHandle,
         UserHandle = 1000
-    };
+    }HandleType;
 
-    enum MapMode
+    typedef enum class 
     {
         NotMapped = 0x00,
         ReadOnly  = 0x01,
         WriteOnly = 0x02,
         ReadWrite = ReadOnly | WriteOnly
-    };
+    }MapMode;
 
     QAbstractVideoBuffer(HandleType type);
     virtual ~QAbstractVideoBuffer();
@@ -94,7 +94,7 @@ private:
     Q_DISABLE_COPY(QAbstractVideoBuffer)
 };
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QAbstractVideoBuffer::HandleType)
 Q_DECLARE_METATYPE(QAbstractVideoBuffer::MapMode)
