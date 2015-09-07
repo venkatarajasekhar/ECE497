@@ -50,7 +50,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 QT_MODULE(Multimedia)
 
@@ -60,8 +60,8 @@ class QAudioFormatPrivate;
 class Q_MULTIMEDIA_EXPORT QAudioFormat
 {
 public:
-    enum SampleType { Unknown, SignedInt, UnSignedInt, Float };
-    enum Endian { BigEndian = QSysInfo::BigEndian, LittleEndian = QSysInfo::LittleEndian };
+    typedef enum class SampleType { Unknown, SignedInt, UnSignedInt, Float };
+    typedef enum class Endian { BigEndian = QSysInfo::BigEndian, LittleEndian = QSysInfo::LittleEndian };
 
     QAudioFormat();
     QAudioFormat(const QAudioFormat &other);
@@ -94,9 +94,23 @@ public:
 private:
     QSharedDataPointer<QAudioFormatPrivate> d;
 };
+class QAudioFormatPrivate : public QSharedData
+{
+public:
+    
+    QAudioFormatPrivate();
+    QAudioFormatPrivate(const QAudioFormatPrivate &other);
+    QAudioFormatPrivate& operator=(const QAudioFormatPrivate &other);
+    private:
+    QString codec;
+    QAudioFormat::Endian byteOrder;
+    QAudioFormat::SampleType sampleType;
+    int frequency;
+    int channels;
+    int sampleSize;
+};
 
-
-QT_END_NAMESPACE
+}//QT_END_NAMESPACE
 
 QT_END_HEADER
 
