@@ -55,7 +55,7 @@
 #define QAUDIODEVICEINFOALSA_H
 
 #include <alsa/asoundlib.h>
-
+#include <vector>
 #include <QtCore/qbytearray.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qlist.h>
@@ -64,12 +64,15 @@
 #include <QtMultimedia/qaudio.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
 #include <QtMultimedia/qaudioengine.h>
+using namespace std;
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE {
 
 const unsigned int MAX_SAMPLE_RATES = 5;
 const unsigned int SAMPLE_RATES[] =
     { 8000, 11025, 22050, 44100, 48000 };
+
+vector <const unsigned int> v_SampleRates(SAMPLE_RATES);
 
 class QAudioDeviceInfoInternal : public QAbstractAudioDeviceInfo
 {
@@ -111,7 +114,7 @@ private:
     snd_pcm_hw_params_t *params;
 };
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 #endif
 
