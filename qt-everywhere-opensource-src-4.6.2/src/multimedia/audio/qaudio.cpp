@@ -43,7 +43,7 @@
 #include <QtMultimedia/qaudio.h>
 
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 namespace QAudio
 {
@@ -100,5 +100,4 @@ public:
 */
 
 
-QT_END_NAMESPACE
-
+}
