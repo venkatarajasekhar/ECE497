@@ -59,7 +59,6 @@
 #include <QtMultimedia/qaudioengine.h>
 
 QT_BEGIN_HEADER
-
 namespace QT_BEGIN_NAMESPACE{
 
 class QAudioDeviceInfoInternal : public QAbstractAudioDeviceInfo
