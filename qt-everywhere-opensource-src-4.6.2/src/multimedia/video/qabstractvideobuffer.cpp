@@ -43,7 +43,7 @@
 
 #include <qvariant.h>
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 /*!
     \class QAbstractVideoBuffer
@@ -196,4 +196,4 @@ QVariant QAbstractVideoBuffer::handle() const
 }
 
 
-QT_END_NAMESPACE
+}//QT_END_NAMESPACE
