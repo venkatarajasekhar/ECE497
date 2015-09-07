@@ -44,47 +44,33 @@
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
-class QAudioDeviceInfoPrivate : public QSharedData
-{
-public:
-    QAudioDeviceInfoPrivate():info(0) {}
-    QAudioDeviceInfoPrivate(const QString &r, const QByteArray &h, QAudio::Mode m):
-        realm(r), handle(h), mode(m)
+QAudioDeviceInfoPrivate::QAudioDeviceInfoPrivate& operator=(const QAudioDeviceInfoPrivate &other)
     {
-        info = QAudioDeviceFactory::audioDeviceInfo(realm, handle, mode);
-    }
-
-    QAudioDeviceInfoPrivate(const QAudioDeviceInfoPrivate &other):
-        QSharedData(other),
-        realm(other.realm), handle(other.handle), mode(other.mode)
-    {
-        info = QAudioDeviceFactory::audioDeviceInfo(realm, handle, mode);
-    }
-
-    QAudioDeviceInfoPrivate& operator=(const QAudioDeviceInfoPrivate &other)
-    {
-        delete info;
-
         realm = other.realm;
         handle = other.handle;
         mode = other.mode;
         info = QAudioDeviceFactory::audioDeviceInfo(realm, handle, mode);
         return *this;
     }
+QAudioDeviceInfoPrivate::QAudioDeviceInfoPrivate(const QString &r, const QByteArray &h, QAudio::Mode m):
+        realm(r), handle(h), mode(m)
+    {
+        info = QAudioDeviceFactory::audioDeviceInfo(realm, handle, mode);
+    }
 
-    ~QAudioDeviceInfoPrivate()
+QAudioDeviceInfoPrivate::QAudioDeviceInfoPrivate(const QAudioDeviceInfoPrivate &other):
+        QSharedData(other),
+        realm(other.realm), handle(other.handle), mode(other.mode)
+    {
+        info = QAudioDeviceFactory::audioDeviceInfo(realm, handle, mode);
+    }
+
+QAudioDeviceInfoPrivate::~QAudioDeviceInfoPrivate()
     {
         delete info;
     }
-
-    QString     realm;
-    QByteArray  handle;
-    QAudio::Mode mode;
-    QAbstractAudioDeviceInfo*   info;
-};
-
 
 /*!
     \class QAudioDeviceInfo
@@ -370,5 +356,5 @@ QAudio::Mode QAudioDeviceInfo::mode() const
     return d->mode;
 }
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
