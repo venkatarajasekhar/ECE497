@@ -61,15 +61,15 @@ class QVideoFramePrivate;
 class Q_MULTIMEDIA_EXPORT QVideoFrame
 {
 public:
-    enum FieldType
+    typedef enum class 
     {
         ProgressiveFrame,
         TopField,
         BottomField,
         InterlacedFrame
-    };
+    }FieldType;
 
-    enum PixelFormat
+    typedef enum class
     {
         Format_Invalid,
         Format_ARGB32,
@@ -104,7 +104,7 @@ public:
         Format_Y16,
 
         Format_User = 1000
-    };
+    }PixelFormat;
 
     QVideoFrame();
     QVideoFrame(QAbstractVideoBuffer *buffer, const QSize &size, PixelFormat format);
@@ -158,7 +158,7 @@ private:
     QExplicitlySharedDataPointer<QVideoFramePrivate> d;
 };
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QVideoFrame::FieldType)
 Q_DECLARE_METATYPE(QVideoFrame::PixelFormat)
