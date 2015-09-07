@@ -56,13 +56,28 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 QT_MODULE(Multimedia)
 
 class QAudioDeviceFactory;
-
 class QAudioDeviceInfoPrivate;
+
+class QAudioDeviceInfoPrivate : public QSharedData
+{
+public:
+    QAudioDeviceInfoPrivate():info(NULL) {}
+    QAudioDeviceInfoPrivate::QAudioDeviceInfoPrivate& operator=(const QAudioDeviceInfoPrivate &other);
+    QAudioDeviceInfoPrivate::QAudioDeviceInfoPrivate(const QString &r, const QByteArray &h, QAudio::Mode m);
+    QAudioDeviceInfoPrivate::QAudioDeviceInfoPrivate(const QAudioDeviceInfoPrivate &other);
+    QAudioDeviceInfoPrivate::~QAudioDeviceInfoPrivate();
+    private:
+    QString     realm;
+    QByteArray  handle;
+    QAudio::Mode mode;
+    QAbstractAudioDeviceInfo*   info;
+};
+
 class Q_MULTIMEDIA_EXPORT QAudioDeviceInfo
 {
     friend class QAudioDeviceFactory;
@@ -103,7 +118,7 @@ private:
     QSharedDataPointer<QAudioDeviceInfoPrivate> d;
 };
 
-QT_END_NAMESPACE
+}//QT_END_NAMESPACE
 
 QT_END_HEADER
 
