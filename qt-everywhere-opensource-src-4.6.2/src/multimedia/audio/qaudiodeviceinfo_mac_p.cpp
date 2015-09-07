@@ -63,7 +63,7 @@
 
 
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 
 QAudioDeviceInfoInternal::QAudioDeviceInfoInternal(QByteArray const& handle, QAudio::Mode)
@@ -72,8 +72,9 @@ QAudioDeviceInfoInternal::QAudioDeviceInfoInternal(QByteArray const& handle, QAu
     quint32 did, tm;
 
     ds >> did >> tm >> name;
-    deviceId = AudioDeviceID(did);
-    mode = QAudio::Mode(tm);
+    
+     deviceId = AudioDeviceID(did);
+     mode = QAudio::Mode(tm);
 }
 
 bool QAudioDeviceInfoInternal::isFormatSupported(const QAudioFormat& format) const
@@ -335,7 +336,14 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
         const int dc = propSize / sizeof(AudioDeviceID);
 
         if (dc > 0) {
-            AudioDeviceID*  audioDevices = new AudioDeviceID[dc];
+            try{
+            AudioDeviceID*  audioDevices =  new AudioDeviceID[dc];
+            }catch (const std::bad_alloc&) {
+            exit(EXIT_FAILURE);
+            }
+                
+            }
+        }
 
             if (AudioHardwareGetProperty(kAudioHardwarePropertyDevices, &propSize, audioDevices) == noErr) {
                 for (int i = 0; i < dc; ++i) {
@@ -353,5 +361,5 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
 }
 
 
-QT_END_NAMESPACE
+}//QT_END_NAMESPACE
 
