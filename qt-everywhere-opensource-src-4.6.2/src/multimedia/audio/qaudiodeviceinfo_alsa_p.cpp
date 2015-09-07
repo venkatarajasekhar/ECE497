@@ -54,13 +54,16 @@
 
 #include <alsa/version.h>
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 QAudioDeviceInfoInternal::QAudioDeviceInfoInternal(QByteArray dev, QAudio::Mode mode)
 {
     handle = 0;
-
+    try{ 
     device = QLatin1String(dev);
+    }catch(...){
+    cout << "Caught exception from QLatin1String()";	
+    }
     this->mode = mode;
 }
 
@@ -165,7 +168,7 @@ bool QAudioDeviceInfoInternal::open()
         dev = device;
 #else
         int idx = 0;
-        char *name;
+        char *name  = NULL;
 
         QString shortName = device.mid(device.indexOf(QLatin1String("="),0)+1);
 
@@ -201,8 +204,8 @@ bool QAudioDeviceInfoInternal::testSettings(const QAudioFormat& format) const
     // Set nearest to closest settings that do work.
     // See if what is in settings will work (return value).
     int err = 0;
-    snd_pcm_t* handle;
-    snd_pcm_hw_params_t *params;
+    snd_pcm_t* handle = NULL;
+    snd_pcm_hw_params_t *params =NULL;
     QString dev = device;
 
     QList<QByteArray> devices = QAudioDeviceInfoInternal::availableDevices(QAudio::AudioOutput);
@@ -218,7 +221,7 @@ bool QAudioDeviceInfoInternal::testSettings(const QAudioFormat& format) const
         dev = device;
 #else
         int idx = 0;
-        char *name;
+        char *name = NULL;
 
         QString shortName = device.mid(device.indexOf(QLatin1String("="),0)+1);
 
@@ -315,10 +318,20 @@ bool QAudioDeviceInfoInternal::testSettings(const QAudioFormat& format) const
             (format.sampleType() != QAudioFormat::Unknown)) {
         switch(format.sampleSize()) {
             case 8:
-                if(format.sampleType() == QAudioFormat::SignedInt)
+                if(format.sampleType() == QAudioFormat::SignedInt){
+                    try{
                     err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S8);
-                else if(format.sampleType() == QAudioFormat::UnSignedInt)
+                    }catch(...){
+                	cout << "Caught exception from snd_pcm_hw_params_set_format()";
+                     }
+                }
+                else if(format.sampleType() == QAudioFormat::UnSignedInt){
+                    try{
                     err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U8);
+                     }catch(...){
+                	cout << "Caught exception from snd_pcm_hw_params_set_format()";
+                     }
+                }
                 break;
             case 16:
                 if(format.sampleType() == QAudioFormat::SignedInt) {
@@ -370,7 +383,11 @@ bool QAudioDeviceInfoInternal::testSettings(const QAudioFormat& format) const
 void QAudioDeviceInfoInternal::updateLists()
 {
     // redo all lists based on current settings
+    try{
     freqz.clear();
+    }catch(...){
+    	cout << "Caught exception from freqz.clear()()";
+    }
     channelz.clear();
     sizez.clear();
     byteOrderz.clear();
@@ -385,7 +402,7 @@ void QAudioDeviceInfoInternal::updateLists()
 
     for(int i=0; i<(int)MAX_SAMPLE_RATES; i++) {
         //if(snd_pcm_hw_params_test_rate(handle, params, SAMPLE_RATES[i], dir) == 0)
-        freqz.append(SAMPLE_RATES[i]);
+        freqz.append(v_SampleRates[i]);
     }
     channelz.append(1);
     channelz.append(2);
@@ -483,4 +500,4 @@ QByteArray QAudioDeviceInfoInternal::defaultOutputDevice()
     return devices.first();
 }
 
-QT_END_NAMESPACE
+}//QT_END_NAMESPACE
