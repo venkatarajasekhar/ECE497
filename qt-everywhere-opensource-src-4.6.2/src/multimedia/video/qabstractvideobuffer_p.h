@@ -56,7 +56,7 @@
 #include <QtCore/qshareddata.h>
 #include <QtMultimedia/qabstractvideobuffer.h>
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 class QAbstractVideoBufferPrivate
 {
@@ -68,6 +68,6 @@ public:
     QAbstractVideoBuffer::HandleType handleType;
 };
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 #endif
