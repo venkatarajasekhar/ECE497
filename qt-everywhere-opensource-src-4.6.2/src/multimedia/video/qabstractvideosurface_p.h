@@ -57,7 +57,7 @@
 #include <QtMultimedia/qvideosurfaceformat.h>
 #include <QtCore/private/qobject_p.h>
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 class QAbstractVideoSurfacePrivate : public QObjectPrivate
 {
@@ -73,6 +73,6 @@ public:
     bool active;
 };
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 #endif
