@@ -55,13 +55,14 @@
 
 #include "QtCore/qtextcodec.h"
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 #ifndef QT_NO_CODECS
 
 class Q_CORE_EXPORT QFontLaoCodec : public QTextCodec
 {
 public:
+     QFontLaoCodec();
     ~QFontLaoCodec();
 
     QByteArray name() const;
@@ -73,6 +74,6 @@ public:
 
 #endif // QT_NO_CODECS
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 #endif // QFONTLAOCODEC_P_H
