@@ -55,6 +55,7 @@
 
 #include "QtCore/qtextcodec.h"
 #include "private/qtextcodec_p.h"
+#include <iostream>
 
 namespace QT_BEGIN_NAMESPACE{
 
@@ -86,12 +87,18 @@ struct QUtf32
     static QByteArray convertFromUnicode(const QChar *, int, QTextCodec::ConverterState *, DataEndianness = DetectEndianness);
 }s_QUtf32;
 
+class Exception {
+public:
+      const char* error;
+      Exception(const char* arg) : error(arg) { }
+};
+
 #ifndef QT_NO_TEXTCODEC
 
 class QUtf8Codec : public QTextCodec {
 public:
     ~QUtf8Codec();
-
+     QUtf8Codec();
     QByteArray name() const;
     int mibEnum() const;
 
@@ -103,7 +110,12 @@ public:
 class QUtf16Codec : public QTextCodec {
 protected:
 public:
-    QUtf16Codec() { e = DetectEndianness; }
+    QUtf16Codec()try:Dataendian(DetectEndianness){
+        throw Exception("Exception thrown in QUtf16Codec()");
+       }
+       catch (Exception& exp) {
+             cout << exp.error << endl;
+       }
     ~QUtf16Codec();
 
     QByteArray name() const;
@@ -114,12 +126,17 @@ public:
     QByteArray convertFromUnicode(const QChar *, int, ConverterState *) const;
 
 protected:
-    DataEndianness e;
+    DataEndianness Dataendian;
 };
 
 class QUtf16BECodec : public QUtf16Codec {
 public:
-    QUtf16BECodec() : QUtf16Codec() { e = BigEndianness; }
+    QUtf16BECodec() : QUtf16Codec()try:Dataendian(BigEndianness) {  
+        throw Exception("Exception thrown in QUtf16Codec()");
+       }
+       catch (Exception& exp) {
+             cout << exp.error << endl;
+       }
     QByteArray name() const;
     QList<QByteArray> aliases() const;
     int mibEnum() const;
@@ -127,7 +144,12 @@ public:
 
 class QUtf16LECodec : public QUtf16Codec {
 public:
-    QUtf16LECodec() : QUtf16Codec() { e = LittleEndianness; }
+    QUtf16LECodec() : QUtf16Codec()try:Dataendian(LittleEndianness) {
+    throw Exception("Exception thrown in QUtf16Codec()");
+       }
+       catch (Exception& exp) {
+             cout << exp.error << endl;
+       }   
     QByteArray name() const;
     QList<QByteArray> aliases() const;
     int mibEnum() const;
@@ -135,7 +157,12 @@ public:
 
 class QUtf32Codec : public QTextCodec {
 public:
-    QUtf32Codec() { e = DetectEndianness; }
+    QUtf32Codec()try:Dataendian(DetectEndianness) {
+        throw Exception("Exception thrown in QUtf32Codec()");
+       }
+       catch (Exception& exp) {
+             cout << exp.error << endl;
+       }   
     ~QUtf32Codec();
 
     QByteArray name() const;
@@ -146,12 +173,17 @@ public:
     QByteArray convertFromUnicode(const QChar *, int, ConverterState *) const;
 
 protected:
-    DataEndianness e;
+    DataEndianness DetectEndianness;
 };
 
 class QUtf32BECodec : public QUtf32Codec {
 public:
-    QUtf32BECodec() : QUtf32Codec() { e = BigEndianness; }
+    QUtf32BECodec() : QUtf32Codec()try:DetectEndianness(BigEndianness) {
+        throw Exception("Exception thrown in QUtf32Codec()");
+       }
+       catch (Exception& exp) {
+             cout << exp.error << endl;
+       }   
     QByteArray name() const;
     QList<QByteArray> aliases() const;
     int mibEnum() const;
@@ -159,7 +191,12 @@ public:
 
 class QUtf32LECodec : public QUtf32Codec {
 public:
-    QUtf32LECodec() : QUtf32Codec() { e = LittleEndianness; }
+    QUtf32LECodec() : QUtf32Codec()try():DetectEndianness(LittleEndianness){
+     throw Exception("Exception thrown in QUtf32Codec()");
+       }
+       catch (Exception& exp) {
+             cout << exp.error << endl;
+             }
     QByteArray name() const;
     QList<QByteArray> aliases() const;
     int mibEnum() const;
