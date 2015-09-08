@@ -56,7 +56,7 @@
 #include "QtCore/qtextcodec.h"
 #include "private/qtextcodec_p.h"
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 typedef enum class 
 {
@@ -67,21 +67,24 @@ typedef enum class
 
 struct QUtf8
 {
+    public:
     static QString convertToUnicode(const char *, int, QTextCodec::ConverterState *);
     static QByteArray convertFromUnicode(const QChar *, int, QTextCodec::ConverterState *);
-};
+}s_QUtf8;
 
 struct QUtf16
 {
+    public:
     static QString convertToUnicode(const char *, int, QTextCodec::ConverterState *, DataEndianness = DetectEndianness);
     static QByteArray convertFromUnicode(const QChar *, int, QTextCodec::ConverterState *, DataEndianness = DetectEndianness);
-};
+}s_QUtf16;
 
 struct QUtf32
 {
+    public:
     static QString convertToUnicode(const char *, int, QTextCodec::ConverterState *, DataEndianness = DetectEndianness);
     static QByteArray convertFromUnicode(const QChar *, int, QTextCodec::ConverterState *, DataEndianness = DetectEndianness);
-};
+}s_QUtf32;
 
 #ifndef QT_NO_TEXTCODEC
 
@@ -165,6 +168,6 @@ public:
 
 #endif // QT_NO_TEXTCODEC
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 #endif // QUTFCODEC_P_H
