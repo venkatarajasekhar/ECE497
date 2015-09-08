@@ -46,7 +46,7 @@
 #ifndef QT_NO_CODECS
 #ifndef QT_NO_BIG_CODECS
 using namespace std;
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 /*Basic Implementation using C Array, Modification required to C++ Vector */
 
@@ -126,7 +126,7 @@ QByteArray QFontLaoCodec::convertFromUnicode(const QChar *uc, int len, Converter
     return rstring;
 }
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
 
 #endif // QT_NO_BIG_CODECS
 #endif // QT_NO_CODECS
