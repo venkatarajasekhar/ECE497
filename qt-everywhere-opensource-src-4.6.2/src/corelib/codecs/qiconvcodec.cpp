@@ -135,9 +135,13 @@ QIconvCodec::~QIconvCodec()
 {
 }
 
-QIconvCodec::IconvState::IconvState(iconv_t x)
+QIconvCodec::IconvState::IconvState(iconv_t x)try
     : buffer(array), bufferLen(sizeof array), cd(x)
 {
+    throw Excep("Exception thrown in A()");
+       }
+       catch (Excep& exp) {
+             cout << exp.error << endl;
 }
 
 QIconvCodec::IconvState::~IconvState()
@@ -183,7 +187,7 @@ QString QIconvCodec::convertToUnicode(const char* chars, int len, ConverterState
         if (convState->d) {
             // restore state
             remainingCount = static_cast<size_t> convState->remainingChars;
-            remainingBuffer = (char *)(*pstate)->buffer;
+            remainingBuffer = static_cast<char *>(*pstate)->buffer;
         } else {
             // first time
             convState->flags |= FreeFunction;
@@ -241,7 +245,7 @@ QString QIconvCodec::convertToUnicode(const char* chars, int len, ConverterState
     }
 
     size_t outBytesLeft = len * 2 + 2;
-    QByteArray ba(outBytesLeft, Qt::Uninitialized);
+    QByteArray ba(outBytesLeft, Qt::Uninitialized); //Ctor
     char *outBytes = ba.data();
     do {
         size_t ret = iconv(state->cd, &inBytes, &inBytesLeft, &outBytes, &outBytesLeft);
@@ -373,8 +377,8 @@ QByteArray QIconvCodec::convertFromUnicode(const QChar *uc, int len, ConverterSt
         inBytes = in.data();
 
         QChar remaining = convState->state_data[0];
-        memcpy(in.data(), &remaining, sizeof(QChar));
-        memcpy(in.data() + sizeof(QChar), uc, inBytesLeft);
+        memcpy(&(in.data()), &remaining, sizeof(QChar));
+        memcpy(&(in.data()) + sizeof(QChar), uc, inBytesLeft);
 
         inBytesLeft += sizeof(QChar);
         convState->remainingChars = 0;
@@ -501,7 +505,7 @@ iconv_t QIconvCodec::createIconv_t(const char *to, const char *from)
 
         // 1. CODESET from ctype if it contains a .CODESET part (e.g. en_US.ISO8859-15)
         codeset = ctype ? strchr(ctype, '.') : 0;
-        if (codeset && *codeset == '.') {
+        if ((codeset) && (*codeset == '.')) {
             ++codeset;
             cd = iconv_open(to ? to : codeset, from ? from : codeset);
         }
