@@ -87,7 +87,7 @@ static Ptr_iconv ptr_iconv = NULL;
 static Ptr_iconv_close ptr_iconv_close = NULL;
 #endif
 
-QT_BEGIN_NAMESPACE
+namespace QT_BEGIN_NAMESPACE{
 
 extern bool qt_locale_initialized;
 
@@ -324,9 +324,10 @@ QByteArray QIconvCodec::convertFromUnicode(const QChar *uc, int len, ConverterSt
             return QByteArray("");
         return QString::fromRawData(uc, len).toLatin1();
     }
-    IconvState *&state = ts->localData();
+    QIconvCodec::IconvState* &state = ts->localData();
     if (!state) {
-        state = new IconvState(QIconvCodec::createIconv_t(0, UTF16));
+         state = new IconvState(QIconvCodec::createIconv_t(0, UTF16));
+        
         if (state->cd != reinterpret_cast<iconv_t>(-1)) {
             size_t outBytesLeft = len + 3; // +3 for the BOM
             QByteArray ba(outBytesLeft, Qt::Uninitialized);
@@ -358,7 +359,7 @@ QByteArray QIconvCodec::convertFromUnicode(const QChar *uc, int len, ConverterSt
     }
  
     size_t outBytesLeft = len;
-    QByteArray ba(outBytesLeft, Qt::Uninitialized);
+    QByteArray ba(outBytesLeft, Qt::Uninitialized); //Ctor
     outBytes = ba.data();
 
     // now feed iconv() the real data
@@ -454,7 +455,7 @@ iconv_t QIconvCodec::createIconv_t(const char *to, const char *from)
     const char *codeset = empty_codeset;
     cd = iconv_open(to ? to : codeset, from ? from : codeset);
 #else
-    char *codeset = 0;
+    char *codeset = NULL;
 #endif
 
 #if defined(_XOPEN_UNIX) && !defined(Q_OS_QNX) && !defined(Q_OS_OSF)
@@ -532,4 +533,4 @@ iconv_t QIconvCodec::createIconv_t(const char *to, const char *from)
     return cd;
 }
 
-QT_END_NAMESPACE
+} //QT_END_NAMESPACE
