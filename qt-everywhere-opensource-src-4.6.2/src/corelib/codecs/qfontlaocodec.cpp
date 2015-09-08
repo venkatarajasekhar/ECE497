@@ -102,12 +102,12 @@ QString QFontLaoCodec::convertToUnicode(const char *, int, ConverterState *) con
 QByteArray QFontLaoCodec::convertFromUnicode(const QChar *uc, int len, ConverterState *) const
 {
     QByteArray rstring(len, Qt::Uninitialized);
-    uchar *rdata = (uchar *) rstring.data();
+    uchar *rdata = static_cast<uchar *> rstring.data();
     const QChar *sdata = uc;
     int i = 0;
     for (; i < len; ++i, ++sdata, ++rdata) {
         if (sdata->unicode() < 0x80) {
-            *rdata = (uchar) sdata->unicode();
+            *rdata = static_cast <uchar> sdata->unicode();
         } else if (sdata->unicode() >= 0x0e80 && sdata->unicode() <= 0x0eff) {
           //  uchar lao = unicode_to_mulelao[sdata->unicode() - 0x0e80];
           try{
