@@ -78,10 +78,11 @@ using namespace std;
 #ifndef GNU_LIBICONV
 #define GNU_LIBICONV
 #endif
+
+#ifdef defined (OS_LINUX_CProgramming)
 typedef iconv_t (*Ptr_iconv_open) (const char*, const char*);
 typedef size_t (*Ptr_iconv) (iconv_t, const char **, size_t *, char **, size_t *);
 typedef int (*Ptr_iconv_close) (iconv_t);
-
 static Ptr_iconv_open ptr_iconv_open = NULL;
 static Ptr_iconv ptr_iconv = NULL;
 static Ptr_iconv_close ptr_iconv_close = NULL;
@@ -94,6 +95,16 @@ extern bool qt_locale_initialized;
 QIconvCodec::QIconvCodec()
     : utf16Codec(0)
 {
+    #ifdef (OS_LINUX_C++Programming)
+    QIconvCodec QIconvCodecobject; 
+	int (QIconvCodec::*PtrQIconvCodecOpen)();  //Declaration
+	PtrQIconvCodecOpen = &QIconvCodec::Ptr_iconv_open;  //Assignment to the Function
+	int (QIconvCodec::*PtrQIconvCodec)();    //Declaration
+	PtrQIconvCodec = &QIconvCodec::Ptr_iconv;  //Assignment to the Function
+	int (QIconvCodec::*PtrQIconvCodecClose)();  //Declaration
+	PtrQIconvCodecClose = &QIconvCodec::Ptr_iconv_close; //Assignment to the Function
+	#endif
+	
     utf16Codec = QTextCodec::codecForMib(1015);
     Q_ASSERT_X(utf16Codec != 0,
                "QIconvCodec::convertToUnicode",
@@ -116,6 +127,36 @@ QIconvCodec::QIconvCodec()
         ptr_iconv_close = reinterpret_cast<Ptr_iconv_close>(libiconv.resolve("libiconv_close"));
         if (!ptr_iconv_close)
             ptr_iconv_close = reinterpret_cast<Ptr_iconv_close>(libiconv.resolve("iconv_close"));
+
+        Q_ASSERT_X(ptr_iconv_open && ptr_iconv && ptr_iconv_close,
+        "QIconvCodec::QIconvCodec()",
+        "internal error, could not resolve the iconv functions");
+
+#       undef iconv_open
+#       define iconv_open ptr_iconv_open
+#       undef iconv
+#       define iconv ptr_iconv
+#       undef iconv_close
+#       define iconv_close ptr_iconv_close
+    }
+#endif
+#if defined(OS_LINUX_C++Programming)
+
+    if (ptr_iconv_open == 0) {
+        QLibrary libiconv(QLatin1String("/usr/lib/libiconv"));
+        libiconv.setLoadHints(QLibrary::ExportExternalSymbolsHint);
+
+        ptr_iconv_open = reinterpret_cast<QIconvCodecobject.*PtrQIconvCodecOpen)()>(libiconv.resolve("libiconv_open"));
+        if (!ptr_iconv_open)
+            ptr_iconv_open = reinterpret_cast<QIconvCodecobject.*PtrQIconvCodecOpen)()>(libiconv.resolve("iconv_open"));
+            
+        ptr_iconv = reinterpret_cast<QIconvCodecobject.*PtrQIconvCodec()>(libiconv.resolve("libiconv"));
+        if (!ptr_iconv)
+            ptr_iconv = reinterpret_cast<QIconvCodecobject.*PtrQIconvCodec()>(libiconv.resolve("iconv"));
+            
+        ptr_iconv_close = reinterpret_cast<QIconvCodecobject.*PtrQIconvCodecClose>(libiconv.resolve("libiconv_close"));
+        if (!ptr_iconv_close)
+            ptr_iconv_close = reinterpret_cast<QIconvCodecobject.*PtrQIconvCodecClose)()>(libiconv.resolve("iconv_close"));
 
         Q_ASSERT_X(ptr_iconv_open && ptr_iconv && ptr_iconv_close,
         "QIconvCodec::QIconvCodec()",
