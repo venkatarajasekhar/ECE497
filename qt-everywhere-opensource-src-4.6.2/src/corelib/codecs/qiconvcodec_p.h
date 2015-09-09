@@ -79,9 +79,14 @@ public:
 
     QByteArray name() const;
     int mibEnum() const;
-
     static iconv_t createIconv_t(const char *to, const char *from);
-
+    
+    #ifdef defined (OS_LINUX_C++Programming)
+    static Ptr_iconv_open(const char*, const char*);
+    static Ptr_iconv(iconv_t, const char **, size_t *, char **, size_t *);
+    static Ptr_iconv_close(iconv_t);
+    #endif
+    
     class IconvState
     {
     public:
