@@ -47,25 +47,9 @@
 #include <private/qcoreapplication_p.h>
 
 QT_BEGIN_NAMESPACE
-
-// we allow for 2^24 = 8^8 = 16777216 simultaneously running timers
-enum { NumberOfBuckets = 8, FirstBucketSize = 8 };
-
-static const int BucketSize[NumberOfBuckets] =
-    { 8, 64, 512, 4096, 32768, 262144, 2097152, 16777216 - 2396744 };
-static const int BucketOffset[NumberOfBuckets] =
-    { 0,  8,  72,  584,  4680,  37448,  299592,  2396744 };
-
-static int FirstBucket[FirstBucketSize] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-static QBasicAtomicPointer<int> timerIds[NumberOfBuckets] =
-    { Q_BASIC_ATOMIC_INITIALIZER(FirstBucket),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0) };
+#if defined(OS_LINUX_C++Programming)
+namespace QT_BEGIN_NAMESPACE{
+#endif
 
 static void timerIdsDestructorFunction()
 {
@@ -119,7 +103,43 @@ void QAbstractEventDispatcherPrivate::init()
         threadData->eventDispatcher = q;
     }
 }
+#if defined(OS_LINUX_C++Programming)
+static QBasicAtomicInt nextFreeTimerId = Q_BASIC_ATOMIC_INITIALIZER(1);
 
+// avoid the ABA-problem by using 7 of the top 8 bits of the timerId as a serial number
+static inline int EventBucket::EvtprepareNewValueWithSerialNumber(int oldId, int newId)
+{
+    return (newId & 0x00FFFFFF) | ((oldId + 0x01000000) & 0x7f000000);
+}
+
+static inline int EventBucket::EvtbucketOffset(int timerId)
+{
+    for (int i = 0; i < NumberOfBuckets; ++i) {
+        if (timerId < BucketSize[i])
+            return i;
+        timerId -= BucketSize[i];
+    }
+    qFatal("QAbstractEventDispatcher: INTERNAL ERROR, timer ID %d is too large", timerId);
+    return -1;
+}
+
+static inline int EventBucket::EvtbucketIndex(int bucket, int timerId)
+{
+    return timerId - BucketOffset[bucket];
+}
+
+static inline int * EventBucket::EvtallocateBucket(int bucket)
+{
+    // allocate a new bucket
+    const int size = BucketSize[bucket];
+    const int offset = BucketOffset[bucket];
+    int *b = new int[size];
+    for (int i = 0; i != size; ++i)
+        b[i] = offset + i + 1;
+    return b;
+}
+
+#endif
 int QAbstractEventDispatcherPrivate::allocateTimerId()
 {
     int timerId, newTimerId;
