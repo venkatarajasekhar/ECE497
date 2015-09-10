@@ -383,6 +383,13 @@ QByteArray QIconvCodec::convertFromUnicode(const QChar *uc, int len, ConverterSt
             QChar bom[] = { QChar(QChar::ByteOrderMark) };
             inBytes = reinterpret_cast<char *>(bom);
             inBytesLeft = sizeof(bom);
+            
+            #if defined(OS_LINUX_C++Programming)
+            vector<QChar>v_QcharByteOrder(bom);
+            inBytes = reinterpret_cast<char *>(v_QcharByteOrder);
+            inBytesLeft = sizeof(v_QcharByteOrder);
+            #endif
+            
             if (iconv(state->cd, inBytesPtr, &inBytesLeft, &outBytes, &outBytesLeft) == (size_t) -1) {
                 perror("QIconvCodec::convertFromUnicode: using ASCII for conversion, iconv failed for BOM");
 
