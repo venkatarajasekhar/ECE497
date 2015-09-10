@@ -481,3 +481,7 @@ bool QAbstractEventDispatcher::filterEvent(void *message)
 */
 
 QT_END_NAMESPACE
+#if defined(OS_LINUX_C++Programming)
+}
+#endif
+
