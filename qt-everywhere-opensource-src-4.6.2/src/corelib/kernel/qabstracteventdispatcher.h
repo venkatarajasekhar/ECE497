@@ -97,7 +97,14 @@ static QBasicAtomicPointer<int> timerIds[NumberOfBuckets] =
       Q_BASIC_ATOMIC_INITIALIZER(0),
       Q_BASIC_ATOMIC_INITIALIZER(0),
       Q_BASIC_ATOMIC_INITIALIZER(0) };
-vector <static QBasicAtomicPointer<int>> v_EvtBucketTimerID(timerIds);      
+vector <static QBasicAtomicPointer<int>> v_EvtBucketTimerID(timerIds);    
+      class EventBucket{
+          public:
+          static inline int prepareNewValueWithSerialNumber(int , int );
+          static inline int EvtbucketOffset(int);
+          static inline int EvtbucketIndex(int , int);
+          static inline int *EvtallocateBucket(int);
+          };
       #endif
 
 class QAbstractEventDispatcherPrivate;
