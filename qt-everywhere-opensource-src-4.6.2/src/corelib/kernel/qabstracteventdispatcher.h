@@ -107,6 +107,7 @@ public:
     virtual void unregisterSocketNotifier(QSocketNotifier *notifier) = 0;
 
     int registerTimer(int interval, QObject *object);
+    int registerTimer(int EventID, int interval, QObject *object);
     virtual void registerTimer(int timerId, int interval, QObject *object) = 0;
     virtual bool unregisterTimer(int timerId) = 0;
     virtual bool unregisterTimers(QObject *object) = 0;
