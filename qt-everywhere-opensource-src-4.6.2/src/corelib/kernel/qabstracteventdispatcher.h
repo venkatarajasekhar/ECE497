@@ -46,30 +46,6 @@
 #include <QtCore/qeventloop.h>
 #include <vector>
 
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-QT_MODULE(Core)
-// we allow for 2^24 = 8^8 = 16777216 simultaneously running timers
-enum { NumberOfBuckets = 8, FirstBucketSize = 8 };
-
-static const int BucketSize[NumberOfBuckets] =
-    { 8, 64, 512, 4096, 32768, 262144, 2097152, 16777216 - 2396744 };
-static const int BucketOffset[NumberOfBuckets] =
-    { 0,  8,  72,  584,  4680,  37448,  299592,  2396744 };
-
-static int FirstBucket[FirstBucketSize] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-static QBasicAtomicPointer<int> timerIds[NumberOfBuckets] =
-    { Q_BASIC_ATOMIC_INITIALIZER(FirstBucket),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0),
-      Q_BASIC_ATOMIC_INITIALIZER(0) };
-
 #if defined(OS_LINUX_C++Programming)
 
 namespace QT_BEGIN_HEADER{
@@ -156,9 +132,6 @@ protected:
                              QObject *parent);
 };
 
-QT_END_NAMESPACE
-
-QT_END_HEADER
 #if defined(OS_LINUX_C++Programming)
 } //QT_END_NAMESPACE
 } //QT_END_HEADER
