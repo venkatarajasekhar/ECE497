@@ -46,53 +46,9 @@
 #include <private/qthread_p.h>
 #include <private/qcoreapplication_p.h>
 
-QT_BEGIN_NAMESPACE
 #if defined(OS_LINUX_C++Programming)
 namespace QT_BEGIN_NAMESPACE{
 #endif
-
-static void timerIdsDestructorFunction()
-{
-    // start at one, the first bucket is pre-allocated
-    for (int i = 1; i < NumberOfBuckets; ++i)
-        delete [] static_cast<int *>(timerIds[i]);
-}
-Q_DESTRUCTOR_FUNCTION(timerIdsDestructorFunction)
-
-static QBasicAtomicInt nextFreeTimerId = Q_BASIC_ATOMIC_INITIALIZER(1);
-
-// avoid the ABA-problem by using 7 of the top 8 bits of the timerId as a serial number
-static inline int prepareNewValueWithSerialNumber(int oldId, int newId)
-{
-    return (newId & 0x00FFFFFF) | ((oldId + 0x01000000) & 0x7f000000);
-}
-
-static inline int bucketOffset(int timerId)
-{
-    for (int i = 0; i < NumberOfBuckets; ++i) {
-        if (timerId < BucketSize[i])
-            return i;
-        timerId -= BucketSize[i];
-    }
-    qFatal("QAbstractEventDispatcher: INTERNAL ERROR, timer ID %d is too large", timerId);
-    return -1;
-}
-
-static inline int bucketIndex(int bucket, int timerId)
-{
-    return timerId - BucketOffset[bucket];
-}
-
-static inline int *allocateBucket(int bucket)
-{
-    // allocate a new bucket
-    const int size = BucketSize[bucket];
-    const int offset = BucketOffset[bucket];
-    int *b = new int[size];
-    for (int i = 0; i != size; ++i)
-        b[i] = offset + i + 1;
-    return b;
-}
 
 void QAbstractEventDispatcherPrivate::init()
 {
@@ -115,9 +71,9 @@ static inline int EventBucket::EvtprepareNewValueWithSerialNumber(int oldId, int
 static inline int EventBucket::EvtbucketOffset(int timerId)
 {
     for (int i = 0; i < NumberOfBuckets; ++i) {
-        if (timerId < BucketSize[i])
+        if (timerId < v_eventbucketsize[i])
             return i;
-        timerId -= BucketSize[i];
+        timerId -= v_eventbucketsize[i];
     }
     qFatal("QAbstractEventDispatcher: INTERNAL ERROR, timer ID %d is too large", timerId);
     return -1;
@@ -125,14 +81,14 @@ static inline int EventBucket::EvtbucketOffset(int timerId)
 
 static inline int EventBucket::EvtbucketIndex(int bucket, int timerId)
 {
-    return timerId - BucketOffset[bucket];
+    return timerId - v_BucketEventOffset[bucket];
 }
 
 static inline int * EventBucket::EvtallocateBucket(int bucket)
 {
     // allocate a new bucket
-    const int size = BucketSize[bucket];
-    const int offset = BucketOffset[bucket];
+    const int size = v_eventbucketsize[bucket];
+    const int offset = v_BucketEventOffset[bucket];
     int *b = new int[size];
     for (int i = 0; i != size; ++i)
         b[i] = offset + i + 1;
@@ -140,6 +96,7 @@ static inline int * EventBucket::EvtallocateBucket(int bucket)
 }
 
 #endif
+
 int QAbstractEventDispatcherPrivate::allocateTimerId()
 {
     int timerId, newTimerId;
@@ -148,8 +105,17 @@ int QAbstractEventDispatcherPrivate::allocateTimerId()
 
         // which bucket are we looking in?
         int which = timerId & 0x00ffffff;
-        int bucket = bucketOffset(which);
-        int at = bucketIndex(bucket, which);
+        try{
+        int bucket = EventBucket::EvtbucketOffset(which); // As it's the Static function ,we Accessed using the class name
+        }catch(...){
+         qFatal("QAbstractEventDispatcherPrivate: INTERNAL ERROR, bucket %d ", bucket);   
+        }
+        try{
+        int at = EventBucket::EvtbucketIndex(bucket, which);
+        }catch(...){
+        qFatal("QAbstractEventDispatcherPrivate: INTERNAL ERROR, at %d ", at);    
+        }
+        
         int *b = timerIds[bucket];
 
         if (!b) {
@@ -170,9 +136,18 @@ int QAbstractEventDispatcherPrivate::allocateTimerId()
 
 void QAbstractEventDispatcherPrivate::releaseTimerId(int timerId)
 {
-    int which = timerId & 0x00ffffff;
-    int bucket = bucketOffset(which);
-    int at = bucketIndex(bucket, which);
+    int which =  timerId & 0x00ffffff;
+      try{
+        int bucket = EventBucket::EvtbucketOffset(which); // As it's the Static function ,we Accessed using the class name
+        }catch(...){
+         qFatal("QAbstractEventDispatcherPrivate: INTERNAL ERROR, bucket %d ", bucket);   
+        }
+        try{
+        int at = EventBucket::EvtbucketIndex(bucket, which);
+        }catch(...){
+        qFatal("QAbstractEventDispatcherPrivate: INTERNAL ERROR, at %d ", at);    
+        }
+    
     int *b = timerIds[bucket];
 
     int freeId, newTimerId;
@@ -320,7 +295,11 @@ QAbstractEventDispatcher *QAbstractEventDispatcher::instance(QThread *thread)
     event loop. Reimplementations must call the base
     implementation.
 */
+int QAbstractEventDispatcher::registerTimer(int EventID,int interval, QObject *object)
+{
 
+    
+}
 /*!
     \fn int QAbstractEventDispatcher::registerTimer(int interval, QObject *object)
 
@@ -328,10 +307,21 @@ QAbstractEventDispatcher *QAbstractEventDispatcher::instance(QThread *thread)
 */
 int QAbstractEventDispatcher::registerTimer(int interval, QObject *object)
 {
+    try{
     int id = QAbstractEventDispatcherPrivate::allocateTimerId();
+    }catch(...){
+       qFatal("QAbstractEventDispatcher: INTERNAL ERROR, id %d ", id); 
+    }
+    //Ctor OverLoading
+    try{
     registerTimer(id, interval, object);
+    }catch(...){
+         qFatal("QAbstractEventDispatcher::registerTimer(): INTERNAL ERROR ,OverLoading Ctor"); 
+    }
     return id;
 }
+
+
 
 /*!
     \fn void QAbstractEventDispatcher::registerTimer(int timerId, int interval, QObject *object)
@@ -480,7 +470,6 @@ bool QAbstractEventDispatcher::filterEvent(void *message)
     \sa awake()
 */
 
-QT_END_NAMESPACE
 #if defined(OS_LINUX_C++Programming)
 }
 #endif
